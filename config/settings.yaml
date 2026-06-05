@@ -1,0 +1,76 @@
+# =============================================================================
+# Project Configuration - Analisis Sentimen Sumatera Blackout
+# =============================================================================
+
+project:
+  name: "Analisis Sentimen Sumatera Blackout"
+  version: "1.0.0"
+  author: "[Nama Anda]"
+  description: "Analisis sentimen publik terhadap pemadaman listrik Sumatera"
+
+# --- Paths ---
+paths:
+  raw_data: "data/raw/"
+  processed_data: "data/processed/"
+  external_data: "data/external/"
+  models: "models/"
+  images: "images/"
+  logs: "logs/"
+
+# --- Preprocessing ---
+preprocessing:
+  language: "indonesian"
+  min_word_length: 2
+  remove_urls: true
+  remove_mentions: true
+  remove_hashtags: false       # Hashtag bisa jadi fitur penting
+  remove_numbers: true
+  remove_punctuation: true
+  lowercase: true
+  stemming: true
+  stopword_removal: true
+  custom_stopwords:
+    - "rt"
+    - "amp"
+    - "yg"
+    - "gak"
+    - "ga"
+    - "nya"
+    - "dgn"
+    - "utk"
+
+# --- Feature Engineering ---
+features:
+  tfidf:
+    max_features: 5000
+    ngram_range: [1, 2]         # Unigram + Bigram
+    min_df: 2
+    max_df: 0.95
+  word2vec:
+    vector_size: 100
+    window: 5
+    min_count: 2
+    workers: 4
+    epochs: 30
+
+# --- Model Training ---
+training:
+  test_size: 0.2
+  random_state: 42
+  cross_validation_folds: 5
+  models:
+    - "naive_bayes"
+    - "svm"
+    - "logistic_regression"
+
+# --- Visualization ---
+visualization:
+  figure_dpi: 150
+  wordcloud:
+    width: 800
+    height: 400
+    max_words: 100
+    background_color: "white"
+    colormap: "viridis"
+  top_n_words: 20
+  style: "seaborn-v0_8-darkgrid"
