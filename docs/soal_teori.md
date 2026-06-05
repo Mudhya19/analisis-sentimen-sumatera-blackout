@@ -9,56 +9,54 @@
 
 ---
 
-### **Soal 1:** 
-*Berikan penjelasan Anda mengenai perbedaan antara text classification dengan text clustering?*
+## BAGIAN 6 : Soal Teori
 
-**Jawaban:**
-Berdasarkan literatur analitik teks kontemporer, perbedaan mendasar antara *Text Classification* (Klasifikasi Teks) dan *Text Clustering* (Klasterisasi Teks) dikotomikan oleh ketersediaan anotas label (kategori data) serta desain obyektif dari algoritmanya:
+1. **Soal 1:** Berikan penjelasan Anda mengenai perbedaan antara *text classification* dengan *text clustering*?
+2. **Soal 2:** Kapan *text clustering* dapat dilakukan pada data teks? Jelaskan situasi atau kondisi di mana teknik ini bermanfaat dan berikan contoh kasus penggunaannya.
+3. **Soal 3:** Jika menggunakan algoritma K-means untuk *text clustering*, bagaimana cara menentukan jumlah klaster optimal? Jelaskan dua metode yang umum digunakan untuk menentukan jumlah klaster optimal.
+
+---
+
+
+### **Bagian 1 : Perbedaan Text Classification dan Text Clustering**
+Berdasarkan literatur analitik teks kontemporer serta penerapannya pada praktik *coding* yang telah dieksekusi dalam proyek ini, perbedaan mendasar antara *Text Classification* dan *Text Clustering* dikotomikan oleh ketersediaan label data dan desain algoritmanya:
 
 1.  **Text Classification (Supervised Learning):**
-    Sebagaimana dijabarkan oleh Alshammari dkk. (2025) [1], klasifikasi teks secara definitif merupakan teknik *supervised learning* yang mewajibkan keberadaan himpunan data latih berlabel (*labeled examples*). Algoritma dirancang untuk secara induktif mempelajari pemetaan (*mapping*) dari fitur-fitur teks masukan menuju kategori target yang telah ditentukan (*predefined categories*). Algoritma menghafal dan mengekstraksi pola historis tersebut guna memprediksi kelas pada dokumen teks baru yang belum pernah diobservasi.
+    Sebagaimana dijabarkan oleh Alshammari dkk. (2025) [1], klasifikasi teks mewajibkan keberadaan himpunan data latih berlabel (*labeled examples*). **Sesuai dengan apa yang kami kerjakan pada proyek ini**, pendekatan inilah yang dieksekusi. Kami melatih algoritma (seperti *Random Forest*, *Logistic Regression*, dan *SVM*) untuk mempelajari matriks fitur (TF-IDF) dari *dataset* berlabel, guna memetakan teks ke dalam kategori target yang telah ditentukan (Sentimen: Positif, Negatif, Netral). Algoritma menghafal pola historis tersebut untuk memprediksi sentimen pada data uji.
 2.  **Text Clustering (Unsupervised Learning):**
-    Di sisi lain, Rodriguez dkk. (2019) [5] mendefinisikan *clustering* secara fundamental sebagai permasalahan *unsupervised learning* yang bertujuan untuk mengelompokkan instansi-instansi teks serupa ke dalam klaster tertentu. Pendekatan ini secara mutlak membedakannya dari klasifikasi, karena algoritma klasterisasi beroperasi pada data mentah (*unlabeled corpus*) dan tidak memerlukan kategori prapendefinisian. Proses pengelompokan terjadi secara mandiri berbasis komputasi jarak matematis (*similarity metrics*) untuk menemukan struktur dan kelompok alami (*inherent structures*) yang tertanam di dalam data.
+    Di sisi lain, Rodriguez dkk. (2019) [5] mendefinisikan *clustering* sebagai permasalahan *unsupervised learning* yang beroperasi murni pada data mentah (*unlabeled corpus*) tanpa adanya kategori prapendefinisian. Berbeda dengan alur kerja klasifikasi di atas, algoritma klasterisasi beroperasi secara mandiri menggunakan komputasi jarak matematis (*similarity metrics*) semata-mata untuk mengelompokkan instansi teks serupa dan menemukan struktur alami (*inherent structures*) di dalam data.
 
 *(Merujuk pada Referensi [1] dan [5] di Daftar Referensi Jurnal)*
 
 ---
 
-### **Soal 2:**
-*Kapan text clustering dapat dilakukan pada data teks? Jelaskan situasi atau kondisi di mana teknik ini bermanfaat dan berikan contoh kasus penggunaannya.*
+### **Bagian 2: Kapan Menggunakan Text Clustering & Contoh Kasus**
+Penerapan *Text Clustering* menjadi sangat vital pada skenario analitik tertentu, khususnya ketika peneliti berhadapan dengan ledakan data tak terstruktur. Mengacu pada tinjauan Kapantaidakis dkk. (2025) [2], teknik ini sangat bermanfaat dalam kondisi:
 
-**Jawaban:**
-Penerapan *Text Clustering* menjadi sangat vital dan melampaui kapabilitas klasifikasi konvensional pada skenario-skenario analitik tertentu, khususnya ketika peneliti berhadapan dengan ledakan data tak terstruktur. Mengacu pada tinjauan Kapantaidakis dkk. (2025) [2], teknik ini sangat bermanfaat dalam kondisi berikut:
+1.  **Ketiadaan Struktur Label (*Unlabeled Data Scenarios*):** Dalam situasi di mana struktur label definitif tidak tersedia, *clustering* berfungsi sebagai mekanisme penjelajahan (*exploratory mechanisms*). Teknik ini beroperasi pada arus masif data di mana proses anotasi manual (pelabelan satu per satu) menjadi tidak rasional dan memakan biaya ekstrim (*prohibitively expensive*).
+2.  **Penemuan Topik Laten (*Latent Topic Discovery*):** Bermanfaat ketika analis bertujuan untuk secara otonom menemukan kelompok tematik (*emergent thematic groups*) dari data tanpa adanya batasan kategori prasangka dari manusia.
 
-1.  **Ketiadaan Struktur Label pada Data Skala Besar (*Unlabeled Data Scenarios*):** 
-    Dalam situasi di mana struktur label definitif tidak tersedia, algoritma *text clustering* berfungsi sebagai mekanisme penjelajahan (*exploratory mechanisms*) yang krusial. Teknik ini mampu beroperasi secara independen pada arus masif data teks, di mana proses anotasi manual oleh manusia menjadi tidak rasional, baik secara biaya maupun waktu (*prohibitively expensive*).
-2.  **Penemuan Topik Laten (*Latent Topic Discovery*):** 
-    *Clustering* bermanfaat ketika analis bertujuan untuk secara otonom menemukan kelompok-kelompok tematik (*emergent thematic groups*) atau topik tersembunyi (*latent topics*) dari sekumpulan data historis tanpa adanya intervensi atau asumsi prasangka (*bias*) dari kategori buatan manusia.
-
-**Contoh Kasus Penggunaan Riil:**
-Sebuah korporasi ingin menganalisis ratusan ribu cuitan media sosial (seperti Twitter/X) secara *real-time* pasca sebuah krisis, misalnya peristiwa pemadaman listrik massal (*Sumatera Blackout*). Alih-alih membatasi pemantauan hanya pada sentimen Positif/Negatif (yang memerlukan model klasifikasi), analis memanfaatkan algoritma *Text Clustering*. Algoritma ini memindai arus data media sosial (*massive streams of social media data*) dan secara otomatis mengkategorikannya menjadi klaster-klaster topik alami, seperti "Keluhan Sinyal Hilang", "Kerusakan Perangkat Elektronik", hingga "Spekulasi Penyebab Teknis", tanpa memerlukan anotasi kategori tersebut di awal.
+**Korelasi dengan Proyek & Contoh Kasus:**
+Dalam proyek *Sumatera Blackout* ini, kami bisa melakukan analisis sentimen karena *dataset* yang digunakan sudah memiliki label. Namun, **andaikan kami merayapi ratusan ribu cuitan Twitter mentah yang belum dilabeli sama sekali** terkait insiden pemadaman tersebut, maka *Text Clustering* (seperti algoritma K-Means atau LDA) harus digunakan. Alih-alih memprediksi "Positif/Negatif", algoritma *clustering* akan memindai teks secara otomatis dan mengkategorikannya menjadi klaster-klaster topik alami (Misal: Klaster 1 membahas "Kerugian Finansial UMKM", Klaster 2 membahas "Keluhan Sinyal Telekomunikasi Hilang", dsb).
 
 *(Merujuk pada Referensi [2] di Daftar Referensi Jurnal)*
 
 ---
 
-### **Soal 3:**
-*Jika menggunakan algoritma K-means untuk text clustering, bagaimana cara menentukan jumlah klaster optimal? Jelaskan dua metode yang umum digunakan untuk menentukan jumlah klaster optimal.*
-
-**Jawaban:**
-Algoritma K-Means mensyaratkan penetapan jumlah klaster ($k$) sebelum tahap komputasi dimulai. Untuk memastikan parameter $k$ ditentukan secara presisi dan objektif, literatur saintifik memformulasikan dua pendekatan evaluasi kuantitatif:
+### **Bagian 3: Menentukan Jumlah Klaster Optimal K-Means**
+Walaupun dalam penyelesaian proyek sentimen *Sumatera Blackout* ini kami menggunakan model klasifikasi yang tidak mensyaratkan partisi jumlah klaster, pemahaman matematis terhadap penentuan parameter $k$ sangat mutlak dalam skenario *Text Clustering*. Algoritma K-Means mewajibkan penetapan jumlah klaster ($k$) sebelum tahap iterasi dimulai. Literatur saintifik memformulasikan dua pendekatan kuantitatif yang paling diakui:
 
 **1. Metode *Elbow* (Pendekatan Matematis *Sum of Squared Errors*):**
-Berdasarkan rumusan Syakur dkk. (2018) [4], metode *Elbow* adalah teknik evaluasi yang mengeksekusi algoritma K-Means berulang kali menggunakan rentang variasi nilai $k$ (misalnya $k=1$ hingga $k=10$). Pada setiap iterasi, nilai kesalahan kuadrat total atau *Sum of Squared Errors* (SSE) dikalkulasi. Hasil komputasi ini diplot dalam bentuk kurva. Analis mencari "titik siku" (*elbow point*), yakni titik kritis di mana tingkat penurunan nilai SSE tiba-tiba melambat secara drastis (*drastically slows down*). Titik siku tersebut merepresentasikan nilai $k$ optimal.
+Berdasarkan rumusan Syakur dkk. (2018) [4], metode *Elbow* adalah teknik yang mengeksekusi algoritma K-Means berulang kali menggunakan rentang variasi nilai $k$ (misalnya $k=1$ hingga $k=10$). Pada setiap iterasi, nilai kesalahan kuadrat total atau *Sum of Squared Errors* (SSE) dikalkulasi dan diplot ke dalam bentuk grafik kurva. Analis secara visual mencari "titik siku" (*elbow point*), yakni titik kritis di mana tingkat penurunan nilai SSE tiba-tiba melambat secara drastis (*drastically slows down*). Titik tersebut merepresentasikan batas jumlah klaster $k$ optimal.
 
 **2. Metode *Silhouette Coefficient* (Pendekatan Kohesi dan Separasi Klaster):**
-Merujuk pada analisis komparatif Sinaga dan Yang (2020) [3], skor *Silhouette* merupakan metrik yang jauh lebih *robust* (tangguh) dibandingkan metode *Elbow*. Metrik ini mengevaluasi dua dimensi sekaligus: kepadatan suatu dokumen terhadap klasternya sendiri (*cluster cohesion*) serta jarak aman dokumen tersebut terhadap klaster tetangga terdekat (*cluster separation*). Kalkulasi matematis ini memproduksi skor dalam rentang -1 hingga 1. Nilai $k$ optimal ditetapkan berdasarkan konfigurasi klasterisasi yang berhasil memproduksi nilai rata-rata skor *Silhouette* tertinggi, yang mengindikasikan struktur klaster alami terbaik (*best natural clustering configuration*).
+Merujuk pada analisis komparatif Sinaga dan Yang (2020) [3], skor *Silhouette* merupakan metrik yang jauh lebih tangguh (*robust metric*) dibandingkan *Elbow*. Metrik ini mengevaluasi kualitas klaster dari dua dimensi sekaligus: tingkat kepadatan suatu dokumen terhadap klasternya sendiri (*cluster cohesion*) serta tingkat keterasingan atau jarak aman dokumen tersebut terhadap klaster tetangga terdekatnya (*cluster separation*). Kalkulasi ini memproduksi skor dalam rentang numerik -1 hingga 1. Nilai $k$ optimal ditetapkan murni berdasarkan konfigurasi yang mampu memproduksi rata-rata skor *Silhouette* tertinggi yang mendekati +1.
 
 *(Merujuk pada Referensi [3] dan [4] di Daftar Referensi Jurnal)*
 
 ---
 
-## 📚 DAFTAR REFERENSI JURNAL (100% OPEN ACCESS)
+## SUMBER REFERENSI JURNAL
 
 Berikut adalah rekapitulasi literatur akademik berstatus *Open Access* (Gratis Akses Penuh) yang menopang seluruh jawaban teoritis di atas:
 
