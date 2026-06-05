@@ -150,7 +150,7 @@ from wordcloud import WordCloud
 
 # --- Machine Learning ---
 from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC, LinearSVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
@@ -211,7 +211,7 @@ Membangun model klasifikasi sentimen yang dapat mengkategorikan opini publik men
 1. Mengumpulkan data teks dari media sosial terkait blackout Sumatera
 2. Melakukan pra-pemrosesan teks (tokenisasi, stemming, dll.)
 3. Mengekstrak fitur menggunakan TF-IDF dan Word2Vec
-4. Melatih dan mengevaluasi model klasifikasi (Naive Bayes, SVM, Logistic Regression)
+4. Melatih dan mengevaluasi model klasifikasi (Random Forest, SVM, Logistic Regression)
 """),
     ]
 
@@ -886,7 +886,7 @@ def build_bagian_5():
 
 Pada bagian ini, dibangun model klasifikasi teks untuk mengkategorikan sentimen publik. Tiga algoritma yang digunakan:
 
-1. **Naive Bayes (MultinomialNB)** — Classifier probabilistik berbasis Teorema Bayes
+1. **Random Forest Classifier** — Model ensemble tangguh berbasis penggabungan banyak decision tree
 2. **Support Vector Machine (LinearSVC)** — Classifier yang mencari hyperplane pemisah optimal
 3. **Logistic Regression** — Classifier linear yang memprediksi probabilitas kelas
 """),
@@ -921,35 +921,35 @@ print(f"\\nDistribusi label Training:\\n{y_train.value_counts()}")
 print(f"\\nDistribusi label Testing:\\n{y_test.value_counts()}")
 """),
         md("""
-### Model 1: Naive Bayes (MultinomialNB)
+### Model 1: Random Forest Classifier
 """),
         code("""
 # =============================================================================
-# Model 1: Naive Bayes
+# Model 1: Random Forest
 # =============================================================================
 
-nb_model = MultinomialNB()
-nb_model.fit(X_train, y_train)
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
 
 # Prediksi
-y_pred_nb = nb_model.predict(X_test)
+y_pred_rf = rf_model.predict(X_test)
 
 # Evaluasi
 print("=" * 60)
-print("EVALUASI MODEL: Naive Bayes (MultinomialNB)")
+print("EVALUASI MODEL: Random Forest Classifier")
 print("=" * 60)
-print(f"  Accuracy  : {accuracy_score(y_test, y_pred_nb):.4f}")
-print(f"  Precision : {precision_score(y_test, y_pred_nb, average='weighted'):.4f}")
-print(f"  Recall    : {recall_score(y_test, y_pred_nb, average='weighted'):.4f}")
-print(f"  F1-Score  : {f1_score(y_test, y_pred_nb, average='weighted'):.4f}")
+print(f"  Accuracy  : {accuracy_score(y_test, y_pred_rf):.4f}")
+print(f"  Precision : {precision_score(y_test, y_pred_rf, average='weighted'):.4f}")
+print(f"  Recall    : {recall_score(y_test, y_pred_rf, average='weighted'):.4f}")
+print(f"  F1-Score  : {f1_score(y_test, y_pred_rf, average='weighted'):.4f}")
 print(f"\\nClassification Report:")
-print(classification_report(y_test, y_pred_nb))
+print(classification_report(y_test, y_pred_rf))
 
 # Confusion Matrix
-ConfusionMatrixDisplay.from_predictions(y_test, y_pred_nb, cmap='Blues')
-plt.title('Confusion Matrix — Naive Bayes', fontsize=14, fontweight='bold')
+ConfusionMatrixDisplay.from_predictions(y_test, y_pred_rf, cmap='Blues')
+plt.title('Confusion Matrix — Random Forest', fontsize=14, fontweight='bold')
 plt.tight_layout()
-plt.savefig(os.path.join('..', 'images', 'output', 'cm_naive_bayes.png'), dpi=300, bbox_inches='tight')
+plt.savefig(os.path.join('..', 'images', 'output', 'cm_random_forest.png'), dpi=300, bbox_inches='tight')
 plt.show()
 """),
         md("""
@@ -1026,24 +1026,24 @@ plt.show()
 
 # Kumpulkan hasil
 results = {
-    'Model': ['Naive Bayes', 'SVM (LinearSVC)', 'Logistic Regression'],
+    'Model': ['Random Forest', 'SVM (LinearSVC)', 'Logistic Regression'],
     'Accuracy': [
-        accuracy_score(y_test, y_pred_nb),
+        accuracy_score(y_test, y_pred_rf),
         accuracy_score(y_test, y_pred_svm),
         accuracy_score(y_test, y_pred_lr),
     ],
     'Precision': [
-        precision_score(y_test, y_pred_nb, average='weighted'),
+        precision_score(y_test, y_pred_rf, average='weighted'),
         precision_score(y_test, y_pred_svm, average='weighted'),
         precision_score(y_test, y_pred_lr, average='weighted'),
     ],
     'Recall': [
-        recall_score(y_test, y_pred_nb, average='weighted'),
+        recall_score(y_test, y_pred_rf, average='weighted'),
         recall_score(y_test, y_pred_svm, average='weighted'),
         recall_score(y_test, y_pred_lr, average='weighted'),
     ],
     'F1-Score': [
-        f1_score(y_test, y_pred_nb, average='weighted'),
+        f1_score(y_test, y_pred_rf, average='weighted'),
         f1_score(y_test, y_pred_svm, average='weighted'),
         f1_score(y_test, y_pred_lr, average='weighted'),
     ],
@@ -1119,7 +1119,7 @@ conclusion = f\"\"\"
 ### Kesimpulan Klasifikasi
 
 Dari ketiga model yang diuji:
-- **Naive Bayes** menghasilkan F1-Score sebesar **{results_df.loc['Naive Bayes', 'F1-Score']:.4f}**
+- **Random Forest** menghasilkan F1-Score sebesar **{results_df.loc['Random Forest', 'F1-Score']:.4f}**
 - **SVM (LinearSVC)** menghasilkan F1-Score sebesar **{results_df.loc['SVM (LinearSVC)', 'F1-Score']:.4f}**
 - **Logistic Regression** menghasilkan F1-Score sebesar **{results_df.loc['Logistic Regression', 'F1-Score']:.4f}**
 
@@ -1134,137 +1134,13 @@ display(Markdown(conclusion))
 # =============================================================================
 import joblib
 
-joblib.dump(nb_model, os.path.join('..', 'models', 'naive_bayes.pkl'))
+joblib.dump(rf_model, os.path.join('..', 'models', 'random_forest.pkl'))
 joblib.dump(svm_model, os.path.join('..', 'models', 'svm_model.pkl'))
 joblib.dump(lr_model, os.path.join('..', 'models', 'logistic_regression.pkl'))
 joblib.dump(tfidf_vectorizer, os.path.join('..', 'models', 'tfidf_vectorizer.pkl'))
 
 logging.info("Semua model klasifikasi dan vectorizer berhasil disimpan ke folder models.")
 print("✅ Model klasifikasi dan TF-IDF Vectorizer berhasil disimpan!")
-"""),
-    ]
-
-
-# ============================================================================
-# BAGIAN 6: SOAL TEORI
-# ============================================================================
-
-def build_bagian_6():
-    return [
-        md("""
----
-
-# 📖 Bagian 6: Soal Teori
-
-> **Catatan:** Setiap jawaban didukung oleh referensi karya ilmiah beserta posisi (halaman, paragraf, bab) yang mendukung jawaban.
-"""),
-        md("""
-## Soal 1: Perbedaan Text Classification dan Text Clustering
-
-**Text Classification** adalah teknik *supervised learning* di mana model dilatih menggunakan data berlabel untuk memprediksi kategori/kelas dari teks baru. Proses ini memerlukan dataset training yang sudah memiliki label kelas yang ditentukan sebelumnya (*predefined categories*).
-
-**Text Clustering** adalah teknik *unsupervised learning* di mana algoritma mengelompokkan dokumen teks ke dalam klaster-klaster berdasarkan kesamaan (*similarity*) tanpa menggunakan label yang sudah ditentukan sebelumnya. Algoritma menemukan pola dan struktur secara mandiri.
-
-| Aspek | Text Classification | Text Clustering |
-|-------|-------------------|----------------|
-| **Tipe Learning** | Supervised | Unsupervised |
-| **Label** | Membutuhkan data berlabel | Tidak membutuhkan label |
-| **Kategori** | Ditentukan di awal (predefined) | Ditemukan oleh algoritma |
-| **Tujuan** | Memprediksi kelas teks baru | Menemukan kelompok alami dalam data |
-| **Contoh Algoritma** | Naive Bayes, SVM, Logistic Regression | K-Means, DBSCAN, Hierarchical Clustering |
-| **Evaluasi** | Accuracy, Precision, Recall, F1 | Silhouette Score, Inertia, Davies-Bouldin |
-| **Contoh Use Case** | Deteksi spam, analisis sentimen | Pengelompokan topik berita, segmentasi pelanggan |
-
-**Referensi:**
-
-1. Aggarwal, C.C. & Zhai, C. (2012). *Mining Text Data*. Springer.
-   - **Bab 6, Halaman 163-164, Paragraf 1-2:** "Text classification is the task of assigning predefined categories to free-text documents... In contrast, text clustering aims to group a set of documents into clusters based on their content similarity without using predefined labels."
-
-2. Manning, C.D., Raghavan, P. & Schütze, H. (2008). *Introduction to Information Retrieval*. Cambridge University Press.
-   - **Bab 13, Halaman 256, Paragraf 1:** "In classification, we are given a set of classes defined by humans... clustering differs from classification in that there are no predefined target classes."
-   - **Bab 16, Halaman 349, Paragraf 1:** "Clustering is the process of grouping a set of objects into clusters of similar objects... it is fundamentally different from classification."
-"""),
-        md("""
-## Soal 2: Kapan Text Clustering Bermanfaat?
-
-Text clustering bermanfaat dalam situasi berikut:
-
-### a) Ketika tidak ada label data (*unlabeled data*)
-Clustering digunakan ketika kita memiliki koleksi teks yang besar tetapi tidak memiliki label/kategori. Teknik ini membantu menemukan struktur tersembunyi dalam data secara otomatis.
-
-### b) Eksplorasi data awal (*Exploratory Data Analysis*)
-Sebelum melakukan klasifikasi, clustering bisa digunakan untuk memahami topik-topik utama yang ada dalam corpus dan menemukan pola yang tidak diketahui sebelumnya.
-
-### c) Pengelompokan dokumen bervolume besar
-Ketika organisasi memiliki ribuan atau jutaan dokumen yang perlu dikelompokkan secara otomatis tanpa harus membuat label manual satu per satu.
-
-### Contoh Kasus Penggunaan:
-
-1. **Pengelompokan Topik Berita:** Situs berita otomatis mengelompokkan artikel-artikel ke dalam topik (politik, olahraga, ekonomi) tanpa label awal, membantu redaksi mengorganisir konten.
-
-2. **Segmentasi Customer Feedback:** Perusahaan e-commerce mengumpulkan ribuan ulasan produk, lalu menggunakan clustering untuk menemukan tema-tema keluhan utama (pengiriman lambat, kualitas produk, pelayanan) tanpa mendefinisikan kategori sebelumnya.
-
-3. **Deteksi Tren di Media Sosial:** Clustering digunakan pada data Twitter/X untuk mendeteksi topik-topik yang sedang trending secara otomatis.
-
-**Referensi:**
-
-1. Steinbach, M., Karypis, G. & Kumar, V. (2000). "A Comparison of Document Clustering Techniques." *KDD Workshop on Text Mining*.
-   - **Halaman 1, Paragraf 2:** "Document clustering has been investigated as a means of improving the performance of retrieval systems, as a method for organizing large collections, and as a way of finding groups of similar documents for browsing."
-
-2. Aggarwal, C.C. & Zhai, C. (2012). *Mining Text Data*. Springer.
-   - **Bab 7, Halaman 195, Paragraf 1:** "Text clustering is useful in a wide variety of applications such as document organization, topic extraction, information retrieval, and summarization."
-"""),
-        md("""
-## Soal 3: Menentukan Jumlah Klaster Optimal (K-Means)
-
-Untuk menentukan jumlah klaster (k) optimal pada algoritma K-Means, dua metode yang umum digunakan:
-
-### Metode 1: Elbow Method
-
-**Konsep:** Elbow Method menggunakan nilai **inertia** (Within-Cluster Sum of Squares / WCSS) — yaitu jumlah kuadrat jarak setiap titik data ke centroid klasternya. Metode ini mem-plot inertia terhadap berbagai nilai k (misalnya k = 2 hingga 10).
-
-**Cara Kerja:**
-1. Jalankan K-Means untuk berbagai nilai k
-2. Hitung inertia untuk setiap k
-3. Plot grafik k vs inertia
-4. Cari titik "siku" (*elbow*) — titik di mana penurunan inertia mulai melambat secara signifikan
-5. Titik siku tersebut adalah nilai k optimal
-
-**Kelebihan:** Sederhana dan intuitif  
-**Kekurangan:** Titik siku terkadang ambigu dan subjektif
-
-### Metode 2: Silhouette Score
-
-**Konsep:** Silhouette Score mengukur seberapa baik setiap objek cocok dengan klasternya sendiri dibandingkan dengan klaster terdekat lainnya. Nilainya berkisar dari -1 hingga +1.
-
-**Interpretasi:**
-- **+1:** Objek sangat cocok dengan klasternya, jauh dari klaster lain
-- **0:** Objek berada di batas antara dua klaster
-- **-1:** Objek salah ditempatkan di klaster yang tidak sesuai
-
-**Cara Kerja:**
-1. Untuk setiap data point i:
-   - a(i) = rata-rata jarak ke semua titik lain dalam klaster yang sama
-   - b(i) = rata-rata jarak ke semua titik di klaster terdekat berikutnya
-   - s(i) = (b(i) - a(i)) / max(a(i), b(i))
-2. Rata-ratakan s(i) untuk semua data point → Silhouette Score
-3. Pilih k dengan Silhouette Score tertinggi
-
-**Kelebihan:** Memberikan ukuran kuantitatif yang jelas, tidak subjektif  
-**Kekurangan:** Lebih mahal secara komputasi
-
-**Referensi:**
-
-1. Kodinariya, T.M. & Makwana, P.R. (2013). "Review on Determining Number of Cluster in K-Means Clustering." *International Journal of Advance Research in Computer Science and Management Studies*, 1(6), pp. 90-95.
-   - **Halaman 91, Paragraf 3 (Section 3.1):** "The Elbow method looks at the percentage of variance explained as a function of the number of clusters... the first clusters will add much information but at some point the marginal gain will drop, giving an angle in the graph."
-   - **Halaman 92, Paragraf 2 (Section 3.3):** "The silhouette value measures how similar an object is to its own cluster compared to other clusters. A high silhouette value indicates that the object is well matched to its own cluster."
-
-2. Rousseeuw, P.J. (1987). "Silhouettes: A Graphical Aid to the Interpretation and Validation of Cluster Analysis." *Journal of Computational and Applied Mathematics*, 20, pp. 53-65.
-   - **Halaman 54, Paragraf 2:** "The silhouette combines both cohesion and separation... it provides a succinct graphical representation of how well each object has been classified."
-   - **Halaman 55, Section 2:** Menjelaskan formula s(i) = (b(i) - a(i)) / max(a(i), b(i)) secara detail.
-
-3. Thorndike, R.L. (1953). "Who Belongs in the Family?" *Psychometrika*, 18(4), pp. 267-276.
-   - **Halaman 270-271:** Memperkenalkan konsep yang kemudian dikenal sebagai "elbow criterion" dalam menentukan jumlah kelompok optimal.
 """),
     ]
 
@@ -1286,7 +1162,7 @@ Proyek analisis sentimen terhadap pemadaman listrik Sumatera telah berhasil dise
 2. **Pra-Pemrosesan Teks** — 5 langkah preprocessing (lowercasing, hapus karakter khusus, tokenisasi, hapus stopwords, stemming) berhasil diterapkan.
 3. **Rekayasa Fitur** — Representasi TF-IDF dan Word2Vec berhasil dibuat dari corpus teks.
 4. **Analisis Eksploratif** — Word cloud, distribusi panjang teks, dan frekuensi kata berhasil divisualisasikan untuk mengungkap wawasan sentimen publik.
-5. **Klasifikasi Teks** — 3 model (Naive Bayes, SVM, Logistic Regression) berhasil dilatih dan dievaluasi.
+5. **Klasifikasi Teks** — 3 model (Random Forest, SVM, Logistic Regression) berhasil dilatih dan dievaluasi.
 
 **Model terbaik:** Didapatkan dari output di atas beserta metrik evaluasinya.
 
@@ -1318,7 +1194,7 @@ def build_notebook() -> dict:
     cells.extend(build_bagian_3())
     cells.extend(build_bagian_4())
     cells.extend(build_bagian_5())
-    cells.extend(build_bagian_6())
+
     cells.extend(build_penutup())
 
     notebook = {
