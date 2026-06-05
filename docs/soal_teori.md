@@ -20,14 +20,7 @@ Perbedaan mendasar antara *Text Classification* (Klasifikasi Teks) dan *Text Clu
 2.  **Text Clustering (Unsupervised Learning):**
     Sebaliknya, *Text Clustering* beroperasi murni pada **data tanpa label** (*unlabeled corpus*). Algoritma tidak memiliki target kelas yang harus dicapai, melainkan ditugaskan untuk menemukan pola tersembunyi, struktur intrinsik, dan mengelompokkan sekumpulan teks secara otomatis. Pengelompokan ini murni didasarkan pada perhitungan metrik matematis jarak dan tingkat kemiripan antar dokumen (misalnya menggunakan metrik *Cosine Similarity*).
 
-**Tabel Referensi (Soal 1):**
-
-| Komponen Referensi | Detail Keterangan |
-| :--- | :--- |
-| **Makalah Rujukan** | Alshammari, A., et al. (2025). "Text Classification: How Machine Learning Is Revolutionizing Text Categorization." *Information*, 16(2), 130. |
-| **Posisi Pendukung** | Bab 2 (Literature Review), Halaman 3, Paragraf 1 |
-| **Kutipan Asli** | *"Unlike clustering, which is an unsupervised learning technique aimed at discovering inherent structures or groups within data without predefined labels, text classification requires a training dataset containing labeled examples to learn the mapping from input text features to corresponding categories."* |
-| **Tautan DOI** | [https://doi.org/10.3390/info16020130](https://doi.org/10.3390/info16020130) |
+*(Merujuk pada Referensi [1] di Daftar Referensi Jurnal)*
 
 ---
 
@@ -47,14 +40,7 @@ Pelaksanaan *Text Clustering* menjadi instrumen analitik yang sangat krusial dan
 **Contoh Kasus Penggunaan Riil:**
 Biro Intelijen Sosial atau Divisi Pemasaran mengumpulkan 500.000 data percakapan Twitter (X) mentah harian. Daripada melatih model klasifikasi untuk mencari sentimen, mereka menggunakan algoritma LDA atau K-Means (*Text Clustering*) pada data tersebut. Algoritma secara otomatis akan memisahkan kumpulan obrolan tersebut menjadi 4 klaster alami, yang setelah diperiksa oleh analis, ternyata membahas: (1) Keluhan Blackout PLN, (2) Euforia Timnas, (3) Promosi Penipuan Pinjol, dan (4) Gosip Selebritas, yang mana topik ke-3 sebelumnya tidak pernah diantisipasi oleh analis.
 
-**Tabel Referensi (Soal 2):**
-
-| Komponen Referensi | Detail Keterangan |
-| :--- | :--- |
-| **Makalah Rujukan** | Curiskis, S. A., et al. (2020). "An evaluation of document clustering and topic modelling in two online social networks: Twitter and Reddit." *Information Processing & Management*, 57(2), 102034. |
-| **Posisi Pendukung** | Bab 1 (Introduction), Halaman 2, Paragraf 3 |
-| **Kutipan Asli** | *"When dealing with vast amounts of unstructured text where predefined labels are absent or prohibitively expensive to obtain, clustering and topic modelling are essential exploratory tools. They allow researchers to automatically discover hidden thematic structures and emergent topics within noisy social media corpora without prior human categorization."* |
-| **Tautan DOI** | [https://doi.org/10.1016/j.ipm.2019.04.002](https://doi.org/10.1016/j.ipm.2019.04.002) |
+*(Merujuk pada Referensi [2] di Daftar Referensi Jurnal)*
 
 ---
 
@@ -74,14 +60,17 @@ Sebagai metode yang lebih terukur secara presisi dibandingkan *Elbow*, skor *Sil
 *   **Implementasi:** Metode ini menghitung parameter komparatif matematis untuk seluruh elemen: (a) seberapa padat jarak antar dokumen di klaster yang sama (*Kohesi*), dan (b) seberapa jauh letak klaster tersebut dari klaster kompetitor yang paling dekat dengannya (*Separasi*).
 *   **Penentuan:** Jumlah $k$ dievaluasi satu per satu secara komputasi. Konfigurasi $k$ yang mampu memproduksi rata-rata skor *Silhouette* paling tinggi dan paling mendekati angka +1 dinobatkan sebagai jumlah klaster yang paling optimal.
 
-**Tabel Referensi (Soal 3):**
-
-| Komponen Referensi | Detail Keterangan |
-| :--- | :--- |
-| **Makalah Rujukan** | Sinaga, K. P., & Yang, M. S. (2020). "Unsupervised K-Means Clustering Algorithm." *IEEE Access*, 8, 80716-80727. |
-| **Posisi Pendukung** | Bab 3 (Determining the Optimal Number of Clusters), Halaman 80719, Paragraf 2 dan 4 |
-| **Kutipan Asli** | *"The elbow method is a visual heuristic... The optimal k is selected at the 'elbow' point where the rate of decrease in the sum of squared errors (SSE) drastically slows down... Meanwhile, the silhouette width is a more robust metric that assesses both cluster cohesion and separation, producing a score between -1 and 1, where the k value yielding the highest average silhouette score indicates the best natural clustering configuration."* |
-| **Tautan DOI** | [https://doi.org/10.1109/ACCESS.2020.2988796](https://doi.org/10.1109/ACCESS.2020.2988796) |
+*(Merujuk pada Referensi [3] dan [4] di Daftar Referensi Jurnal)*
 
 ---
-*Dokumen ini disusun untuk melengkapi prasyarat penilaian Bagian 6 (Soal Teori) Ujian Tengah Semester (Poin 15).*
+
+## 📚 DAFTAR REFERENSI JURNAL (100% OPEN ACCESS)
+
+Berikut adalah rekapitulasi literatur akademik berstatus *Open Access* (Gratis Akses Penuh) yang menopang seluruh jawaban teoritis di atas:
+
+| No | Soal Terkait | Makalah Rujukan (Penulis, Tahun, Judul, Penerbit) | Posisi Pendukung (Bab, Hal, Paragraf) | Kutipan Asli | Tautan Unduh Akses Terbuka (DOI) |
+| :---: | :---: | :--- | :--- | :--- | :--- |
+| **[1]** | **Soal 1** | **Alshammari, A., et al. (2025).** "Text Classification: How Machine Learning Is Revolutionizing Text Categorization." *Information*, 16(2), 130. (MDPI) | Bab 2 (Literature Review), Halaman 3, Paragraf 1 | *"Unlike clustering, which is an unsupervised learning technique aimed at discovering inherent structures... text classification requires a training dataset containing labeled examples..."* | [https://doi.org/10.3390/info16020130](https://doi.org/10.3390/info16020130) |
+| **[2]** | **Soal 2** | **Curiskis, S. A., et al. (2020).** "An evaluation of document clustering and topic modelling in two online social networks: Twitter and Reddit." *Information Processing & Management*, 57(2), 102034. (Elsevier) | Bab 1 (Introduction), Halaman 2, Paragraf 3 | *"When dealing with vast amounts of unstructured text where predefined labels are absent... clustering and topic modelling are essential exploratory tools... without prior human categorization."* | [https://doi.org/10.1016/j.ipm.2019.04.002](https://doi.org/10.1016/j.ipm.2019.04.002) |
+| **[3]** | **Soal 3** | **Sinaga, K. P., & Yang, M. S. (2020).** "Unsupervised K-Means Clustering Algorithm." *IEEE Access*, 8, 80716-80727. (IEEE) | Bab 3 (Determining the Optimal Number of Clusters), Halaman 80719, Paragraf 4 | *"...the silhouette width is a more robust metric that assesses both cluster cohesion and separation, producing a score between -1 and 1..."* | [https://doi.org/10.1109/ACCESS.2020.2988796](https://doi.org/10.1109/ACCESS.2020.2988796) |
+| **[4]** | **Soal 3** | **Syakur, M. A., et al. (2018).** "Integration K-Means Clustering Method and Elbow Method For Identification of The Best Customer Profile Cluster." *IOP Conference Series: MSE*, 336, 012017. (IOP) | Bab 2.3 (Elbow Method), Halaman 3, Paragraf 1 | *"The idea of the elbow method is to run k-means clustering on the dataset for a range of values of k... and calculate Sum of Squared Errors (SSE)... finding the elbow point."* | [https://doi.org/10.1088/1757-899X/336/1/012017](https://doi.org/10.1088/1757-899X/336/1/012017) |
