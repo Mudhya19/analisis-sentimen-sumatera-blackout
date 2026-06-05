@@ -978,7 +978,7 @@ print(f"\\nClassification Report:")
 print(classification_report(y_test, y_pred_svm))
 
 # Confusion Matrix
-ConfusionMatrixDisplay.from_predictions(y_test, y_pred_svm, cmap='Oranges')
+ConfusionMatrixDisplay.from_predictions(y_test, y_pred_svm, cmap='PuBu')
 plt.title('Confusion Matrix — SVM (LinearSVC)', fontsize=14, fontweight='bold')
 plt.tight_layout()
 plt.savefig(os.path.join('..', 'images', 'output', 'cm_svm.png'), dpi=300, bbox_inches='tight')
@@ -1010,7 +1010,7 @@ print(f"\\nClassification Report:")
 print(classification_report(y_test, y_pred_lr))
 
 # Confusion Matrix
-ConfusionMatrixDisplay.from_predictions(y_test, y_pred_lr, cmap='Greens')
+ConfusionMatrixDisplay.from_predictions(y_test, y_pred_lr, cmap='GnBu')
 plt.title('Confusion Matrix — Logistic Regression', fontsize=14, fontweight='bold')
 plt.tight_layout()
 plt.savefig(os.path.join('..', 'images', 'output', 'cm_logistic_regression.png'), dpi=300, bbox_inches='tight')
