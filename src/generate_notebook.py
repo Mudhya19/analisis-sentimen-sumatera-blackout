@@ -1137,7 +1137,7 @@ import joblib
 joblib.dump(nb_model, os.path.join('..', 'models', 'naive_bayes.pkl'))
 joblib.dump(svm_model, os.path.join('..', 'models', 'svm_model.pkl'))
 joblib.dump(lr_model, os.path.join('..', 'models', 'logistic_regression.pkl'))
-joblib.dump(vectorizer, os.path.join('..', 'models', 'tfidf_vectorizer.pkl'))
+joblib.dump(tfidf_vectorizer, os.path.join('..', 'models', 'tfidf_vectorizer.pkl'))
 
 logging.info("Semua model klasifikasi dan vectorizer berhasil disimpan ke folder models.")
 print("✅ Model klasifikasi dan TF-IDF Vectorizer berhasil disimpan!")
