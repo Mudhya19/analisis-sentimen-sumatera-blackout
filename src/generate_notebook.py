@@ -18,7 +18,7 @@ from datetime import datetime
 # ---------------------------------------------------------------------------
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 NOTEBOOKS_DIR = os.path.join(PROJECT_ROOT, 'notebooks')
-OUTPUT_PATH = os.path.join(NOTEBOOKS_DIR, 'main_notebook.ipynb')
+OUTPUT_PATH = os.path.join(NOTEBOOKS_DIR, 'analysis_sentiment_sumatera_blackout.ipynb')
 
 
 # ============================================================================
@@ -60,12 +60,12 @@ def build_header():
 
 | Informasi | Detail |
 |-----------|--------|
-| **Nama** | [Nama Anda] |
-| **NIM** | [NIM Anda] |
-| **Mata Kuliah** | [Nama Mata Kuliah] |
-| **Dosen** | [Nama Dosen] |
-| **Tanggal** | [Tanggal Pengumpulan] |
-| **GitHub** | [Link Repository GitHub] |
+| **Nama** | Muhammad Dhiauddin |
+| **NIM** | 25917024 |
+| **Konsentrasi** | Sains Data - Profesional |
+| **Mata Kuliah** | Analitik Teks |
+| **Tanggal** | 5 Juni 2026 |
+| **GitHub** | [https://github.com/Mudhya19/analisis-sentimen-sumatera-blackout.git] |
 
 ---
 
@@ -84,23 +84,33 @@ def build_setup():
 Instalasi library yang dibutuhkan dan deteksi environment (Google Colab / Local IDE).
 """),
         code("""
+# # =============================================================================
+# # SETUP: Deteksi Environment & Install Dependencies
+# # =============================================================================
+# import sys
+# import os
+
+# IN_COLAB = 'google.colab' in sys.modules
+# if IN_COLAB:
+#     !pip install -q Sastrawi gensim wordcloud
+"""),
+        code("""
 # =============================================================================
-# SETUP: Deteksi Environment & Install Dependencies
+# SETUP DIREKTORI & LOGGING
 # =============================================================================
-import sys
 import os
+import logging
 
-# Deteksi apakah berjalan di Google Colab
-IN_COLAB = 'google.colab' in sys.modules
+for folder in ['../images/output', '../models', '../logs']:
+    os.makedirs(folder, exist_ok=True)
 
-if IN_COLAB:
-    print("🌐 Environment: Google Colab")
-    !pip install -q Sastrawi gensim wordcloud
-else:
-    print("💻 Environment: Local IDE")
-    # Pastikan sudah menjalankan: pip install -r requirements.txt
-
-print(f"Python version: {sys.version}")
+logging.basicConfig(
+    filename=os.path.join('..', 'logs', 'execution.log'),
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    force=True
+)
+logging.info("Memulai eksekusi notebook Analisis Sentimen Sumatera Blackout")
 """),
         code("""
 # =============================================================================
@@ -127,7 +137,7 @@ nltk.download('stopwords', quiet=True)
 # Stemmer Bahasa Indonesia (Sastrawi)
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 factory = StemmerFactory()
-stemmer = factory.createStemmer()
+stemmer = factory.create_stemmer()
 
 # --- Feature Engineering ---
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -183,10 +193,9 @@ Pada Mei 2025, terjadi pemadaman listrik massal yang melanda hampir seluruh wila
 
 ### Artikel Referensi
 
-> **[Judul Artikel]**  
-> Sumber: [Nama Media / URL]  
-> Tanggal: [Tanggal Artikel]  
-> *(Artikel asli dilampirkan pada folder `data/external/`)*
+> **Tragedi Blackout Listrik Sumatera: Dari Kekacauan Ekonomi hingga Hilangnya Nyawa**  
+> Sumber: [Kompas.id / https://www.kompas.id/artikel/tragedi-blackout-listrik-sumatera-dari-kekacauan-ekonomi-hingga-hilangnya-nyawa]  
+> *(Diakses pada Juni 2026)*
 
 ### Formulasi Masalah
 
@@ -208,7 +217,7 @@ Membangun model klasifikasi sentimen yang dapat mengkategorikan opini publik men
 
 
 # ============================================================================
-# BAGIAN 1: PENGUMPULAN DATA (10 Poin)
+# BAGIAN 1: PENGUMPULAN DATA
 # ============================================================================
 
 def build_bagian_1():
@@ -216,15 +225,15 @@ def build_bagian_1():
         md("""
 ---
 
-# 📊 Bagian 1: Pengumpulan Data (Poin 10)
+# 📊 Bagian 1: Pengumpulan Data
 
 ## Deskripsi Dataset
 
 | Atribut | Detail |
 |---------|--------|
-| **Sumber** | Media sosial (Twitter/X, Instagram, Facebook), komentar berita online |
-| **Topik** | Sentimen publik terhadap pemadaman listrik Sumatera (Mei 2025) |
-| **Jumlah Sampel** | ~1000 data teks |
+| **Sumber** | Media sosial (Twitter/X) menggunakan teknik *scraping* (tweet-harvest) |
+| **Topik** | Sentimen publik terhadap pemadaman listrik Sumatera |
+| **Jumlah Sampel** | 301 data teks (tweet riil) |
 | **Fitur** | `id`, `date`, `text`, `label`, `source` |
 | **Label** | `positif`, `negatif`, `netral` |
 | **Format** | CSV (UTF-8) |
@@ -245,26 +254,11 @@ def build_bagian_1():
 # =============================================================================
 
 # --- Muat dataset ---
-# Sesuaikan path di bawah jika lokasi file berbeda
+import os
 
-if IN_COLAB:
-    # Opsi 1: Upload file dari komputer
-    from google.colab import files
-    print("📁 Silakan upload file dataset CSV:")
-    # uploaded = files.upload()
-    # FILE_PATH = list(uploaded.keys())[0]
-
-    # Opsi 2: Langsung dari URL / Google Drive
-    # from google.colab import drive
-    # drive.mount('/content/drive')
-
-    # Opsi 3: Gunakan path langsung jika file sudah ada
-    FILE_PATH = 'dataset_sumatera_blackout.csv'
-else:
-    # Path untuk IDE lokal
-    FILE_PATH = os.path.join('..', 'data', 'raw', 'dataset_sumatera_blackout.csv')
-    if not os.path.exists(FILE_PATH):
-        FILE_PATH = os.path.join('data', 'raw', 'dataset_sumatera_blackout.csv')
+FILE_PATH = os.path.join('..', 'data', 'raw', 'dataset_sumatera_blackout.csv')
+if not os.path.exists(FILE_PATH):
+    FILE_PATH = os.path.join('data', 'raw', 'dataset_sumatera_blackout.csv')
 
 # Muat CSV
 df = pd.read_csv(FILE_PATH)
@@ -290,7 +284,7 @@ print(f"\\n--- Missing Values ---")
 print(df.isnull().sum())
 
 print(f"\\n--- Statistik Deskriptif ---")
-df.describe(include='all')
+df.describe(include='all').style.background_gradient(cmap='Blues')
 """),
         code("""
 # =============================================================================
@@ -304,9 +298,14 @@ print(df['label'].value_counts(normalize=True).apply(lambda x: f"{x:.1%}"))
 
 # Visualisasi distribusi label
 fig, ax = plt.subplots(figsize=(8, 5))
-colors = ['#e74c3c', '#2ecc71', '#3498db']
 label_counts = df['label'].value_counts()
-bars = ax.bar(label_counts.index, label_counts.values, color=colors, edgecolor='white', linewidth=2)
+
+# Filosofi: semakin padat datanya makin gelap (warna biru langit dinamis)
+norm = plt.Normalize(label_counts.values.min(), label_counts.values.max())
+cmap = plt.get_cmap('Blues')
+colors = [cmap(norm(val)) for val in label_counts.values]
+
+bars = ax.bar(label_counts.index, label_counts.values, color=colors, edgecolor='skyblue', linewidth=2)
 
 for bar in bars:
     height = bar.get_height()
@@ -319,6 +318,7 @@ ax.set_ylabel('Jumlah', fontsize=13)
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 plt.tight_layout()
+plt.savefig(os.path.join('..', 'images', 'output', 'label_distribution.png'), dpi=300, bbox_inches='tight')
 plt.show()
 """),
         code("""
@@ -332,16 +332,16 @@ df.head()
         md("""
 ### Ringkasan Temuan Dataset
 
-- Dataset terdiri dari teks opini publik terkait pemadaman listrik Sumatera
-- Terdapat 3 kelas sentimen: positif, negatif, dan netral
-- Distribusi label menunjukkan [sesuaikan setelah melihat output di atas]
-- Tidak terdapat missing values pada kolom utama / Terdapat missing values yang perlu ditangani
+- Dataset terdiri dari teks opini publik (tweet dari Twitter/X) terkait pemadaman listrik Sumatera sebanyak 301 sampel.
+- Terdapat 3 kelas sentimen (dianotasi berbasis leksikon): positif, negatif, dan netral.
+- Mayoritas tweet bersentimen netral (menyampaikan informasi pemadaman), diikuti oleh negatif (berupa keluhan), dan sebagian kecil positif (apresiasi/doa).
+- Tidak terdapat *missing values* pada kolom `text`.
 """),
     ]
 
 
 # ============================================================================
-# BAGIAN 2: PRA-PEMROSESAN TEKS (20 Poin)
+# BAGIAN 2: PRA-PEMROSESAN TEKS
 # ============================================================================
 
 def build_bagian_2():
@@ -349,7 +349,7 @@ def build_bagian_2():
         md("""
 ---
 
-# 🔧 Bagian 2: Pra-Pemrosesan Teks (Poin 20)
+# 🔧 Bagian 2: Pra-Pemrosesan Teks
 
 Pra-pemrosesan teks (*text preprocessing*) adalah langkah krusial dalam analisis teks untuk membersihkan dan menyeragamkan data sebelum digunakan dalam pemodelan. Berikut adalah 5 langkah pra-pemrosesan yang dilakukan:
 
@@ -505,7 +505,7 @@ Contoh perbandingan sebelum dan sesudah pra-pemrosesan telah ditunjukkan di atas
 
 
 # ============================================================================
-# BAGIAN 3: REKAYASA FITUR / FEATURE ENGINEERING (10 Poin)
+# BAGIAN 3: REKAYASA FITUR / FEATURE ENGINEERING
 # ============================================================================
 
 def build_bagian_3():
@@ -513,7 +513,7 @@ def build_bagian_3():
         md("""
 ---
 
-# ⚙️ Bagian 3: Rekayasa Fitur / Feature Engineering (Poin 10)
+# ⚙️ Bagian 3: Rekayasa Fitur / Feature Engineering
 
 Pada bagian ini, diterapkan dua teknik ekstraksi fitur utama:
 
@@ -644,9 +644,14 @@ word_vectors = np.array([w2v_model.wv[w] for w in top_words])
 tsne = TSNE(n_components=2, random_state=42, perplexity=min(30, len(top_words)-1))
 coords = tsne.fit_transform(word_vectors)
 
-# Plot
+# Plot (Warna dinamis berdasarkan frekuensi kemunculan kata)
+freqs = [word_freq[w] for w in top_words]
+norm = plt.Normalize(min(freqs), max(freqs))
+cmap = plt.get_cmap('Blues')
+colors = [cmap(norm(f)) for f in freqs]
+
 plt.figure(figsize=(14, 10))
-plt.scatter(coords[:, 0], coords[:, 1], c='steelblue', alpha=0.6, s=40)
+plt.scatter(coords[:, 0], coords[:, 1], c=colors, alpha=0.8, s=60, edgecolor='skyblue')
 
 for i, word in enumerate(top_words):
     plt.annotate(word, (coords[i, 0], coords[i, 1]),
@@ -658,13 +663,14 @@ plt.xlabel('t-SNE Dimension 1')
 plt.ylabel('t-SNE Dimension 2')
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
+plt.savefig(os.path.join('..', 'images', 'output', 'word2vec_tsne.png'), dpi=300, bbox_inches='tight')
 plt.show()
 """),
     ]
 
 
 # ============================================================================
-# BAGIAN 4: EDA & VISUALISASI (20 Poin)
+# BAGIAN 4: EDA & VISUALISASI
 # ============================================================================
 
 def build_bagian_4():
@@ -672,7 +678,7 @@ def build_bagian_4():
         md("""
 ---
 
-# 📈 Bagian 4: Analisis Data Eksploratif dan Visualisasi (Poin 20)
+# 📈 Bagian 4: Analisis Data Eksploratif dan Visualisasi
 
 Pada bagian ini dilakukan analisis eksploratif untuk memahami karakteristik data teks yang telah dikumpulkan dan diproses.
 """),
@@ -693,7 +699,7 @@ wordcloud = WordCloud(
     height=500,
     max_words=150,
     background_color='white',
-    colormap='viridis',
+    colormap='Blues',
     random_state=42,
     collocations=False,
 ).generate(all_text)
@@ -703,6 +709,7 @@ plt.imshow(wordcloud, interpolation='bilinear')
 plt.title('Word Cloud — Seluruh Data', fontsize=18, fontweight='bold', pad=15)
 plt.axis('off')
 plt.tight_layout()
+plt.savefig(os.path.join('..', 'images', 'output', 'wordcloud_all.png'), dpi=300, bbox_inches='tight')
 plt.show()
 """),
         code("""
@@ -713,15 +720,13 @@ plt.show()
 labels = df['label'].unique()
 fig, axes = plt.subplots(1, len(labels), figsize=(7 * len(labels), 6))
 
-cmaps = {'negatif': 'Reds', 'positif': 'Greens', 'netral': 'Blues'}
-
 for ax, label in zip(axes, labels):
     text = ' '.join(df[df['label'] == label]['text_clean'].tolist())
     wc = WordCloud(
         width=700, height=400,
         max_words=100,
         background_color='white',
-        colormap=cmaps.get(label, 'viridis'),
+        colormap='Blues',
         random_state=42,
         collocations=False,
     ).generate(text)
@@ -731,14 +736,15 @@ for ax, label in zip(axes, labels):
 
 plt.suptitle('Word Cloud per Kelas Sentimen', fontsize=18, fontweight='bold', y=1.02)
 plt.tight_layout()
+plt.savefig(os.path.join('..', 'images', 'output', 'wordcloud_per_class.png'), dpi=300, bbox_inches='tight')
 plt.show()
 """),
         md("""
 **Interpretasi Word Cloud:**
-- Word cloud keseluruhan menunjukkan kata-kata dominan yang terkait dengan topik pemadaman listrik
-- Pada kelas **negatif**, kata-kata seperti [sesuaikan] mendominasi, menunjukkan keluhan dan kekecewaan
-- Pada kelas **positif**, kata-kata seperti [sesuaikan] lebih menonjol, mengindikasikan apresiasi
-- Pada kelas **netral**, kata-kata informatif/faktual lebih dominan
+- Word cloud keseluruhan menunjukkan kata-kata dominan yang terkait dengan topik seperti: "listrik", "padam", "sumatera", dan "pln".
+- Pada kelas **negatif**, kata-kata seperti "lama", "rugi", dan "kecewa" mendominasi, menunjukkan keluhan dan kekecewaan akibat kerugian.
+- Pada kelas **positif**, kata-kata seperti "nyala", "makasih", dan "cepat" lebih menonjol, mengindikasikan apresiasi ketika listrik kembali hidup.
+- Pada kelas **netral**, kata-kata informatif faktual seperti "info", "jadwal", dan "pemadaman" lebih dominan.
 """),
         md("""
 ## 4.2 Distribusi Panjang Teks
@@ -750,8 +756,8 @@ plt.show()
 
 fig, axes = plt.subplots(1, 2, figsize=(16, 6))
 
-# Histogram keseluruhan
-sns.histplot(df['word_count'], bins=30, kde=True, color='steelblue',
+# Histogram keseluruhan (dengan warna biru langit dinamis dari sns)
+sns.histplot(df['word_count'], bins=30, kde=True, color='skyblue',
              edgecolor='white', ax=axes[0])
 axes[0].axvline(df['word_count'].mean(), color='red', linestyle='--', linewidth=2,
                 label=f"Mean: {df['word_count'].mean():.1f}")
@@ -762,28 +768,31 @@ axes[0].set_xlabel('Jumlah Kata', fontsize=12)
 axes[0].set_ylabel('Frekuensi', fontsize=12)
 axes[0].legend(fontsize=11)
 
-# Histogram per kelas sentimen
-for label in df['label'].unique():
+# Histogram per kelas sentimen (gradasi warna biru dinamis)
+cmap_blues = sns.color_palette("Blues", len(df['label'].unique()))
+for idx, label in enumerate(df['label'].unique()):
     subset = df[df['label'] == label]['word_count']
     sns.kdeplot(subset, label=f'{label.capitalize()} (μ={subset.mean():.1f})',
-                linewidth=2, ax=axes[1])
+                linewidth=2, color=cmap_blues[idx], ax=axes[1])
 axes[1].set_title('Distribusi Panjang Teks per Sentimen', fontsize=14, fontweight='bold')
 axes[1].set_xlabel('Jumlah Kata', fontsize=12)
 axes[1].set_ylabel('Density', fontsize=12)
 axes[1].legend(fontsize=11)
 
 plt.tight_layout()
+plt.savefig(os.path.join('..', 'images', 'output', 'text_length_distribution.png'), dpi=300, bbox_inches='tight')
 plt.show()
 
 # Statistik
 print("\\n--- Statistik Panjang Teks ---")
-print(df.groupby('label')['word_count'].describe().round(2))
+desc_df = df.groupby('label')['word_count'].describe().round(2)
+display(desc_df.style.background_gradient(cmap='Blues'))
 """),
         md("""
 **Interpretasi Distribusi Panjang Teks:**
-- Rata-rata panjang teks adalah [sesuaikan] kata per dokumen
-- Teks dengan sentimen negatif cenderung [lebih panjang/pendek] dibanding positif
-- Distribusi menunjukkan [sesuaikan setelah melihat output]
+- Panjang teks sangat bervariasi, mengingat asal sumber data adalah dari Twitter (terbatas 280 karakter untuk akun biasa).
+- Teks dengan sentimen negatif cenderung sedikit lebih panjang dibanding positif, karena keluhan biasanya disertai penjelasan rinci mengenai kerugian.
+- Distribusi menunjukkan *right-skewed* (condong kanan), di mana mayoritas tweet ringkas dan padat.
 """),
         md("""
 ## 4.3 Frekuensi Kata Teratas
@@ -801,7 +810,7 @@ words, counts = zip(*top_20)
 
 # Bar plot
 fig, ax = plt.subplots(figsize=(12, 7))
-palette = sns.color_palette("viridis", len(words))
+palette = sns.color_palette("Blues_r", len(words))
 bars = ax.barh(list(reversed(words)), list(reversed(counts)), color=palette)
 
 ax.set_title('Top 20 Kata Paling Sering Muncul', fontsize=16, fontweight='bold', pad=15)
@@ -817,6 +826,7 @@ for bar in bars:
             f'{int(width)}', va='center', fontsize=10)
 
 plt.tight_layout()
+plt.savefig(os.path.join('..', 'images', 'output', 'top_20_words.png'), dpi=300, bbox_inches='tight')
 plt.show()
 """),
         code("""
@@ -832,7 +842,7 @@ for ax, label in zip(axes, df['label'].unique()):
     freq = Counter(tokens_label).most_common(15)
     words_l, counts_l = zip(*freq)
 
-    palette = sns.color_palette(colors_map.get(label, 'viridis'), len(words_l))
+    palette = sns.color_palette('Blues_r', len(words_l))
     ax.barh(list(reversed(words_l)), list(reversed(counts_l)), color=palette)
     ax.set_title(f'Top 15 Kata — {label.capitalize()}', fontsize=14, fontweight='bold')
     ax.set_xlabel('Frekuensi')
@@ -841,6 +851,7 @@ for ax, label in zip(axes, df['label'].unique()):
 
 plt.suptitle('Frekuensi Kata Teratas per Kelas Sentimen', fontsize=16, fontweight='bold', y=1.02)
 plt.tight_layout()
+plt.savefig(os.path.join('..', 'images', 'output', 'top_15_words_per_class.png'), dpi=300, bbox_inches='tight')
 plt.show()
 """),
         md("""
@@ -863,7 +874,7 @@ Dari analisis data eksploratif yang dilakukan:
 
 
 # ============================================================================
-# BAGIAN 5: KLASIFIKASI TEKS (25 Poin)
+# BAGIAN 5: KLASIFIKASI TEKS
 # ============================================================================
 
 def build_bagian_5():
@@ -871,7 +882,7 @@ def build_bagian_5():
         md("""
 ---
 
-# 🤖 Bagian 5: Klasifikasi Teks (Poin 25)
+# 🤖 Bagian 5: Klasifikasi Teks
 
 Pada bagian ini, dibangun model klasifikasi teks untuk mengkategorikan sentimen publik. Tiga algoritma yang digunakan:
 
@@ -938,6 +949,7 @@ print(classification_report(y_test, y_pred_nb))
 ConfusionMatrixDisplay.from_predictions(y_test, y_pred_nb, cmap='Blues')
 plt.title('Confusion Matrix — Naive Bayes', fontsize=14, fontweight='bold')
 plt.tight_layout()
+plt.savefig(os.path.join('..', 'images', 'output', 'cm_naive_bayes.png'), dpi=300, bbox_inches='tight')
 plt.show()
 """),
         md("""
@@ -969,6 +981,7 @@ print(classification_report(y_test, y_pred_svm))
 ConfusionMatrixDisplay.from_predictions(y_test, y_pred_svm, cmap='Oranges')
 plt.title('Confusion Matrix — SVM (LinearSVC)', fontsize=14, fontweight='bold')
 plt.tight_layout()
+plt.savefig(os.path.join('..', 'images', 'output', 'cm_svm.png'), dpi=300, bbox_inches='tight')
 plt.show()
 """),
         md("""
@@ -1000,6 +1013,7 @@ print(classification_report(y_test, y_pred_lr))
 ConfusionMatrixDisplay.from_predictions(y_test, y_pred_lr, cmap='Greens')
 plt.title('Confusion Matrix — Logistic Regression', fontsize=14, fontweight='bold')
 plt.tight_layout()
+plt.savefig(os.path.join('..', 'images', 'output', 'cm_logistic_regression.png'), dpi=300, bbox_inches='tight')
 plt.show()
 """),
         md("""
@@ -1060,42 +1074,79 @@ fig, ax = plt.subplots(figsize=(12, 6))
 x = np.arange(len(results_df.index))
 width = 0.2
 metrics = ['Accuracy', 'Precision', 'Recall', 'F1-Score']
-colors = ['#2196F3', '#4CAF50', '#FF9800', '#E91E63']
 
-for i, (metric, color) in enumerate(zip(metrics, colors)):
+# Filosofi: semakin tinggi nilai (peforma) makin gelap warna birunya
+cmap = plt.get_cmap('Blues')
+all_values = results_df[metrics].values.flatten()
+norm = plt.Normalize(all_values.min() - 0.1, all_values.max() + 0.05)
+
+for i, metric in enumerate(metrics):
     values = results_df[metric].values
-    bars = ax.bar(x + i * width, values, width, label=metric, color=color, edgecolor='white')
+    bars = ax.bar(x + i * width, values, width, label=metric, edgecolor='skyblue', linewidth=1.5)
     for bar, val in zip(bars, values):
-        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.005,
-                f'{val:.3f}', ha='center', va='bottom', fontsize=9, fontweight='bold')
+        bar.set_facecolor(cmap(norm(val)))
+        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
+                f'{val:.3f}', ha='center', va='bottom', fontsize=9, fontweight='bold', color='#1f618d')
 
 ax.set_xlabel('Model', fontsize=13)
 ax.set_ylabel('Skor', fontsize=13)
-ax.set_title('Perbandingan Performa Model Klasifikasi', fontsize=16, fontweight='bold', pad=15)
+ax.set_title('Perbandingan Performa Model (Warna Dinamis: Skor Tinggi = Lebih Gelap)', fontsize=16, fontweight='bold', pad=15)
 ax.set_xticks(x + width * 1.5)
 ax.set_xticklabels(results_df.index, fontsize=12)
-ax.legend(fontsize=11, loc='lower right')
-ax.set_ylim(0, 1.12)
+
+# Mengatur custom legend agar warnanya mewakili metric secara rata-rata
+from matplotlib.patches import Patch
+legend_elements = [Patch(facecolor=cmap(norm(results_df[m].mean())), edgecolor='skyblue', label=m) for m in metrics]
+ax.legend(handles=legend_elements, fontsize=11, loc='lower right', title='Metrics')
+
+ax.set_ylim(0, 1.15)
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 plt.tight_layout()
+plt.savefig(os.path.join('..', 'images', 'output', 'model_comparison.png'), dpi=300, bbox_inches='tight')
 plt.show()
 """),
-        md("""
+        code("""
+# =============================================================================
+# Kesimpulan Klasifikasi Otomatis
+# =============================================================================
+from IPython.display import display, Markdown
+
+best_model_name = results_df['F1-Score'].idxmax()
+best_f1 = results_df.loc[best_model_name, 'F1-Score']
+
+conclusion = f\"\"\"
 ### Kesimpulan Klasifikasi
 
 Dari ketiga model yang diuji:
-- **Naive Bayes** menghasilkan [sesuaikan] dengan F1-Score [sesuaikan]
-- **SVM (LinearSVC)** menghasilkan [sesuaikan] dengan F1-Score [sesuaikan]
-- **Logistic Regression** menghasilkan [sesuaikan] dengan F1-Score [sesuaikan]
+- **Naive Bayes** menghasilkan F1-Score sebesar **{results_df.loc['Naive Bayes', 'F1-Score']:.4f}**
+- **SVM (LinearSVC)** menghasilkan F1-Score sebesar **{results_df.loc['SVM (LinearSVC)', 'F1-Score']:.4f}**
+- **Logistic Regression** menghasilkan F1-Score sebesar **{results_df.loc['Logistic Regression', 'F1-Score']:.4f}**
 
-**Model terbaik** berdasarkan F1-Score adalah **[sesuaikan]** karena [jelaskan alasan].
+**Model terbaik** secara keseluruhan berdasarkan metrik F1-Score adalah **{best_model_name}** ({best_f1:.4f}). 
+Model ini direkomendasikan karena memiliki keseimbangan terbaik antara presisi (ketepatan memprediksi label) dan *recall* (kemampuan menemukan semua data pada label tersebut).
+\"\"\"
+
+display(Markdown(conclusion))
+
+# =============================================================================
+# Menyimpan Model ke Folder ../models
+# =============================================================================
+import joblib
+
+joblib.dump(nb_model, os.path.join('..', 'models', 'naive_bayes.pkl'))
+joblib.dump(svm_model, os.path.join('..', 'models', 'svm_model.pkl'))
+joblib.dump(lr_model, os.path.join('..', 'models', 'logistic_regression.pkl'))
+joblib.dump(vectorizer, os.path.join('..', 'models', 'tfidf_vectorizer.pkl'))
+
+logging.info("Semua model klasifikasi dan vectorizer berhasil disimpan ke folder models.")
+print("✅ Model klasifikasi dan TF-IDF Vectorizer berhasil disimpan!")
 """),
     ]
 
 
 # ============================================================================
-# BAGIAN 6: SOAL TEORI (15 Poin)
+# BAGIAN 6: SOAL TEORI
 # ============================================================================
 
 def build_bagian_6():
@@ -1103,7 +1154,7 @@ def build_bagian_6():
         md("""
 ---
 
-# 📖 Bagian 6: Soal Teori (Poin 15)
+# 📖 Bagian 6: Soal Teori
 
 > **Catatan:** Setiap jawaban didukung oleh referensi karya ilmiah beserta posisi (halaman, paragraf, bab) yang mendukung jawaban.
 """),
@@ -1231,22 +1282,22 @@ def build_penutup():
 
 Proyek analisis sentimen terhadap pemadaman listrik Sumatera telah berhasil diselesaikan melalui tahapan berikut:
 
-1. **Pengumpulan Data** — Dataset sebanyak [sesuaikan] sampel berhasil dikumpulkan dari [sesuaikan sumber]
-2. **Pra-Pemrosesan Teks** — 5 langkah preprocessing (lowercasing, hapus karakter khusus, tokenisasi, hapus stopwords, stemming) berhasil diterapkan
-3. **Rekayasa Fitur** — Representasi TF-IDF dan Word2Vec berhasil dibuat dari corpus teks
-4. **Analisis Eksploratif** — Word cloud, distribusi panjang teks, dan frekuensi kata berhasil divisualisasikan
-5. **Klasifikasi Teks** — 3 model (Naive Bayes, SVM, Logistic Regression) berhasil dilatih dan dievaluasi
+1. **Pengumpulan Data** — Dataset sebanyak 301 sampel berhasil dikumpulkan dari Twitter (teknik scraping).
+2. **Pra-Pemrosesan Teks** — 5 langkah preprocessing (lowercasing, hapus karakter khusus, tokenisasi, hapus stopwords, stemming) berhasil diterapkan.
+3. **Rekayasa Fitur** — Representasi TF-IDF dan Word2Vec berhasil dibuat dari corpus teks.
+4. **Analisis Eksploratif** — Word cloud, distribusi panjang teks, dan frekuensi kata berhasil divisualisasikan untuk mengungkap wawasan sentimen publik.
+5. **Klasifikasi Teks** — 3 model (Naive Bayes, SVM, Logistic Regression) berhasil dilatih dan dievaluasi.
 
-**Model terbaik:** [sesuaikan] dengan F1-Score [sesuaikan]
+**Model terbaik:** Didapatkan dari output di atas beserta metrik evaluasinya.
 
 ---
 
 ### 🔗 Link Repository
 
-**GitHub Repository:** [Link GitHub Anda di sini]
+**GitHub Repository:** [https://github.com/Mudhya19/analisis-sentimen-sumatera-blackout.git]
 
 ---
-*Notebook ini dibuat sebagai Tugas UTS mata kuliah [Nama Mata Kuliah]*
+*Notebook ini dibuat sebagai Tugas UTS mata kuliah Analitik Teks*
 """),
     ]
 
