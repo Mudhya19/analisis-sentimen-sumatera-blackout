@@ -44,3 +44,7 @@ models/*.joblib
 # data/raw/*.csv
 # data/raw/*.xlsx
 # data/processed/*.csv
+
+# Hidden Docs
+docs/instruction_task.md
+docs/references.md
